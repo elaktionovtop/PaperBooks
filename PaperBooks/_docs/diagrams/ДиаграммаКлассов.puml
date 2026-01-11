@@ -1,0 +1,50 @@
+﻿	@startuml
+
+class Librarian {
+Id
+FullName
+Login
+Password
+}
+
+class Reader {
+Id
+FullName
+Phone
+}
+
+class Book {
+Id
+Title
+}
+
+class Author {
+Id
+FullName
+}
+
+class BookCopy {
+Id
+InventoryNumber
+IsAvailable
+}
+
+class Loan {
+Id
+IssueDate
+ReturnDate
+}
+
+class Reservation {
+Id
+ReservationDate
+}
+
+Book "1" -- "*" BookCopy
+Book "*" -- "*" Author
+Reader "1" -- "*" Loan
+BookCopy "1" -- "0..1" Loan
+Reader "1" -- "*" Reservation
+Book "1" -- "*" Reservation
+
+@enduml
