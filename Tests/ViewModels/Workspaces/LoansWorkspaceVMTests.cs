@@ -72,5 +72,36 @@ namespace Tests.ViewModels.Workspaces
             Assert.Empty(vm.Loans);
             Assert.Null(vm.CurrentLoan);
         }
+
+        [Fact]
+        public void IssueBook_adds_loan_and_selects_it()
+        {
+            var reader = new Reader { Name = "R1" };
+            //var book = new Book { Title = "B1", FreeCount = 1 };
+            var book = new Book { Title = "B1" };
+
+            var loansService = new InMemoryLoansService();
+            var vm = new LoansWorkspaceVM(loansService);
+
+            vm.CurrentReader = reader;
+            vm.CurrentBook = book;
+
+            vm.IssueBookCommand.Execute(null);
+
+            Assert.Single(vm.Loans);
+            Assert.Equal(reader, vm.CurrentLoan!.Reader);
+            Assert.Equal(book, vm.CurrentLoan.Book);
+        }
+
+        [Fact]
+        public void IssueBook_disabled_without_reader_or_book()
+        {
+            var vm = new LoansWorkspaceVM(new InMemoryLoansService());
+
+            Assert.False(vm.IssueBookCommand.CanExecute(null));
+
+            vm.CurrentReader = new Reader();
+            Assert.False(vm.IssueBookCommand.CanExecute(null));
+        }
     }
 }

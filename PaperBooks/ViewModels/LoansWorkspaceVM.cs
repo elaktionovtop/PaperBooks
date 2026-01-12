@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 
 using PaperBooks.Models;
 using PaperBooks.Services;
 using PaperBooks.ViewModels;
+
+using System.Collections.ObjectModel;
 
 public sealed partial class LoansWorkspaceVM : WorkspaceVM
 {
@@ -17,6 +19,9 @@ public sealed partial class LoansWorkspaceVM : WorkspaceVM
 
     [ObservableProperty]
     private Reader? _currentReader;
+
+    [ObservableProperty]
+    private Book? _currentBook;
 
     public LoansWorkspaceVM(ILoansService loansService)
     {
@@ -46,4 +51,18 @@ public sealed partial class LoansWorkspaceVM : WorkspaceVM
             }
         }
     }
+
+    [RelayCommand(CanExecute = nameof(CanIssueBook))]       //
+    private void IssueBook()
+    {
+        var loan = _loansService.IssueLoan(CurrentReader!, CurrentBook!);
+        _allLoans.Add(loan);
+        ApplyFilter();
+        CurrentLoan = loan;
+    }
+
+    //
+    private bool CanIssueBook() =>                      
+        CurrentReader != null &&
+        CurrentBook != null;
 }

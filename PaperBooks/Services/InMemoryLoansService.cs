@@ -21,5 +21,23 @@ namespace PaperBooks.Services
 
         public IEnumerable<Loan> GetActiveLoans()
             => _loans;
+
+        public Loan IssueLoan(Reader reader, Book book)   //
+        {
+            var loan = new Loan
+            {
+                Reader = reader,
+                Book = book,
+                IssuedAt = DateTime.Now
+            };
+
+            _loans.Add(loan);
+            return loan;
+        }
+
+        public void ReturnLoan(Loan loan)         //
+        {
+            loan.ReturnAt = DateTime.Now;
+        }
     }
 }
