@@ -55,7 +55,7 @@ public sealed partial class LoansWorkspaceVM : WorkspaceVM
     [RelayCommand(CanExecute = nameof(CanIssueBook))]       //
     private void IssueBook()
     {
-        var loan = _loansService.IssueLoan(CurrentReader!, CurrentBook!);
+        var loan = _loansService.IssueBook(CurrentReader!, CurrentBook!);
         _allLoans.Add(loan);
         ApplyFilter();
         CurrentLoan = loan;

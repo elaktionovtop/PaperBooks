@@ -22,12 +22,19 @@ namespace PaperBooks.Services
         public IEnumerable<Loan> GetActiveLoans()
             => _loans;
 
-        public Loan IssueLoan(Reader reader, Book book)   //
+        public Loan IssueBook(Reader reader, Book book)   
         {
+            var freeCopy = book.Copies
+                .FirstOrDefault(c => IsFree(c));
+
+            if(freeCopy == null)
+                throw new InvalidOperationException("Нет свободных экземпляров");
+
             var loan = new Loan
             {
                 Reader = reader,
-                Book = book,
+                //Book = book,
+                Copy = freeCopy,
                 IssuedAt = DateTime.Now
             };
 
@@ -35,9 +42,13 @@ namespace PaperBooks.Services
             return loan;
         }
 
-        public void ReturnLoan(Loan loan)         //
+        public void ReturnBook(Loan loan)         //
         {
             loan.ReturnAt = DateTime.Now;
+            _loans.Remove(loan);
         }
+
+        public bool IsFree(BookCopy copy)
+            => !_loans.Any(l => l.Copy == copy && l.ReturnAt == null);
     }
 }

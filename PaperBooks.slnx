@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Элементы решения/">
+    <File Path="toDo.txt" />
+  </Folder>
   <Project Path="PaperBooks\PaperBooks.csproj" />
   <Project Path="Tests/Tests.csproj" Id="5dbb1bf1-76e2-42ea-ae24-3c80405ff94f" />
 </Solution>

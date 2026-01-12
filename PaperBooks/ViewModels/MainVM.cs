@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using PaperBooks.Models;
 using PaperBooks.Services;
+
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PaperBooks.ViewModels
 {
@@ -22,6 +23,9 @@ namespace PaperBooks.ViewModels
 
         private readonly LoansWorkspaceVM loansVM = 
             new(new InMemoryLoansService());
+
+        [ObservableProperty]
+        private Reader? _currentReader;
 
         public MainVM()
         {

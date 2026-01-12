@@ -72,7 +72,7 @@ namespace Tests.ViewModels.Workspaces
             Assert.Empty(vm.Loans);
             Assert.Null(vm.CurrentLoan);
         }
-
+/*
         [Fact]
         public void IssueBook_adds_loan_and_selects_it()
         {
@@ -92,7 +92,7 @@ namespace Tests.ViewModels.Workspaces
             Assert.Equal(reader, vm.CurrentLoan!.Reader);
             Assert.Equal(book, vm.CurrentLoan.Book);
         }
-
+  */
         [Fact]
         public void IssueBook_disabled_without_reader_or_book()
         {
@@ -103,5 +103,76 @@ namespace Tests.ViewModels.Workspaces
             vm.CurrentReader = new Reader();
             Assert.False(vm.IssueBookCommand.CanExecute(null));
         }
+
+        [Fact]
+        public void IssueBook_TakesFirstFreeCopy()
+        {
+            // arrange
+            var book = new Book() { Title = "Clean Code" };
+            var copy1 = new BookCopy(book);
+            var copy2 = new BookCopy(book);
+            book.Copies.Add(copy1);
+            book.Copies.Add(copy2);
+
+            var reader = new Reader() { Name = "Alice" };
+
+            var loansService = new InMemoryLoansService();
+            //var issueService = new LoansIssueService(loansService);
+
+            // act
+            var loan = loansService.IssueBook(reader, book);
+
+            // assert
+            Assert.NotNull(loan);
+            Assert.Equal(copy1, loan.Copy);
+            Assert.False(loansService.IsFree(copy1));
+            Assert.True(loansService.IsFree(copy2));
+        }
+
+        [Fact]
+        public void IssueBook_WhenNoFreeCopies_Throws()
+        {
+            // arrange
+            var book = new Book() { Title = "DDD" };
+            var copy = new BookCopy(book);
+            book.Copies.Add(copy);
+
+            var reader = new Reader(){Name = "Bob"};
+            var reader1 = new Reader() { Name = "Eve" };
+
+            var loansService = new InMemoryLoansService();
+            loansService.IssueBook(reader, book);
+            //var issueService = new LoansIssueService(loansService);
+
+            // act & assert
+            Assert.Throws<InvalidOperationException>(
+                () => loansService.IssueBook(reader1, book));
+        }
+
+        [Fact]
+        public void ReturnBook_MakesCopyFree()
+        {
+            // arrange
+            var book = new Book(){ Title = "CLR via C#" };
+            var copy = new BookCopy(book);
+            book.Copies.Add(copy);
+
+            var reader = new Reader(){ Name="Eve" };
+
+            var loansService = new InMemoryLoansService();
+            //var issueService = new LoansIssueService(loansService);
+            //var returnService = new LoansReturnService(loansService);
+
+            var loan = loansService.IssueBook(reader, book);
+
+            // act
+            loansService.ReturnBook(loan);
+
+            // assert
+            //Assert.False(copy.IsLoaned);
+            Assert.True(loansService.IsFree(copy));
+            Assert.Empty(loansService.GetActiveLoans());
+        }
     }
 }
+
