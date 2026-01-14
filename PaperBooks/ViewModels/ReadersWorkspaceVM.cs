@@ -32,5 +32,13 @@ namespace PaperBooks.ViewModels
             foreach(var book in _service.GetBooksOfReader(value))
                 ReaderBooks.Add(book);
         }
+
+        public void Refresh()
+        {
+            //Loans.Clear();
+            //foreach(var loan in _loansService.GetLoansFor(CurrentReader))
+            //    Loans.Add(loan);
+        }
+
     }
 }

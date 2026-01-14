@@ -9,14 +9,17 @@ namespace PaperBooks.Services
     public sealed class InMemoryLoansService : ILoansService
     {
         private readonly List<Loan> _loans = [];
+        private readonly List<Reservation> _reservations = [];       //
 
         public InMemoryLoansService()
         {
         }
 
-        public InMemoryLoansService(IEnumerable<Loan> loans)
+        public InMemoryLoansService(IEnumerable<Loan> loans,
+            IEnumerable<Reservation> reservations)
         {
-            _loans.AddRange(loans);
+            _loans.AddRange(loans);               
+            _reservations.AddRange(reservations);               //
         }
 
         public IEnumerable<Loan> GetActiveLoans()
@@ -29,6 +32,8 @@ namespace PaperBooks.Services
 
             if(freeCopy == null)
                 throw new InvalidOperationException("Нет свободных экземпляров");
+
+            RemoveReservation(book, reader);                      //
 
             var loan = new Loan
             {
@@ -50,5 +55,8 @@ namespace PaperBooks.Services
 
         public bool IsFree(BookCopy copy)
             => !_loans.Any(l => l.Copy == copy && l.ReturnAt == null);
+
+        private void RemoveReservation(Book book, Reader reader)           //
+       => _reservations.RemoveAll(r => r.Book == book && r.Reader == reader);
     }
 }
