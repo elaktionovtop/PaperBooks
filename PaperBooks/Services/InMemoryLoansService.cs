@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 using System.Text;
 
 namespace PaperBooks.Services
@@ -28,17 +29,14 @@ namespace PaperBooks.Services
         public Loan IssueBook(Reader reader, Book book)   
         {
             var freeCopy = book.Copies
-                .FirstOrDefault(c => IsFree(c));
-
-            if(freeCopy == null)
-                throw new InvalidOperationException("Нет свободных экземпляров");
-
+                .FirstOrDefault(c => IsFree(c)) 
+                ?? throw new InvalidOperationException
+                    ("Нет свободных экземпляров");
             RemoveReservation(book, reader);                      //
 
             var loan = new Loan
             {
                 Reader = reader,
-                //Book = book,
                 Copy = freeCopy,
                 IssuedAt = DateTime.Now
             };
@@ -51,6 +49,8 @@ namespace PaperBooks.Services
         {
             loan.ReturnAt = DateTime.Now;
             _loans.Remove(loan);
+            RemoveReservation(loan.Copy.Book,
+                loan.Reader);
         }
 
         public bool IsFree(BookCopy copy)

@@ -19,7 +19,7 @@ namespace PaperBooks.Services
             _readers.AddRange(readers);
         }
 
-        public IEnumerable<Reader> GetBookedBookReaders(Book book)
+        public IEnumerable<Reader> GetBookReadersBooked(Book book)
             => _readers;
     }
 }
