@@ -15,6 +15,16 @@ namespace PaperBooks.Services
             _books.AddRange(books);
         }
 
+        public IEnumerable<Reader> GetAll()
+        {
+            return [];
+        }
+
+        public Reader? GetById(int id)
+        {
+            return null;
+        }
+
         public IEnumerable<Book> GetBooksOfReader(Reader reader)
             => _books;
     }
