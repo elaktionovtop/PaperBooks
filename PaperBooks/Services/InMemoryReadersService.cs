@@ -4,15 +4,8 @@ namespace PaperBooks.Services
 {
     public class InMemoryReadersService : IReadersService
     {
-        private readonly List<Book> _books = [];
-
         public InMemoryReadersService()
         {
-        }
-
-        public InMemoryReadersService(IEnumerable<Book> books)
-        {
-            _books.AddRange(books);
         }
 
         public IEnumerable<Reader> GetAll()
@@ -24,8 +17,5 @@ namespace PaperBooks.Services
         {
             return null;
         }
-
-        public IEnumerable<Book> GetBooksOfReader(Reader reader)
-            => _books;
     }
 }

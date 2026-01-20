@@ -15,12 +15,12 @@ namespace PaperBooks.ViewModels
         private readonly ILoansService _loansService;
 
         public ObservableCollection<Reader> Readers { get; } = [];
-        public ObservableCollection<Book> ReaderBooks { get; } = [];
+        public ObservableCollection<BookCopy> ReaderBookCopies { get; } = [];
 
         public ObservableCollection<Book> Books { get; } = [];
-        public ObservableCollection<Reader> BookReadersBooked { get; } = [];
+        public ObservableCollection<Reader> ReadersReservedBook { get; } = [];
 
-        public ObservableCollection<Loan> Loans { get; } = [];
+        public ObservableCollection<Loan> ReaderLoans { get; } = [];
 
         [ObservableProperty]
         private Reader? _currentReader;
@@ -51,53 +51,51 @@ namespace PaperBooks.ViewModels
 
         partial void OnCurrentReaderChanged(Reader? value)
         {
-            RefreshReaderBooks(value);
+            RefreshReaderBookCopies(value);
             RefreshReaderLoans(value);
         }
 
-        private void RefreshReaderBooks(Reader? reader)
+        private void RefreshReaderBookCopies(Reader? reader)
         {
-            Books.Clear();
+            ReaderBookCopies.Clear();
 
             if(reader is null)
                 return;
 
-            foreach(var book in _readersService.GetBooksOfReader(reader))
-                Books.Add(book);
+            foreach(var bookCopy in _loansService.GetReaderBookCopies(reader))
+                ReaderBookCopies.Add(bookCopy);
         }
 
         private void RefreshReaderLoans(Reader? reader)
         {
-            Loans.Clear();
+            ReaderLoans.Clear();
 
             if(reader is null)
                 return;
 
-            foreach(var loan in _loansService
-                .GetActiveLoans()
+            foreach(var loan in _loansService.GetActiveLoans()
                 .Where(l => l.Reader == reader))
             {
-                Loans.Add(loan);
+                ReaderLoans.Add(loan);
             }
 
-            CurrentLoan = Loans.FirstOrDefault();
+            CurrentLoan = ReaderLoans.FirstOrDefault();
         }
 
         partial void OnCurrentBookChanged(Book? value)
         {
-            RefreshBookReadersBooked(value);
+            RefreshReadersReservedBook(value);
         }
 
-        private void RefreshBookReadersBooked(Book? book)
+        private void RefreshReadersReservedBook(Book? book)
         {
-            BookReadersBooked.Clear();
+            ReadersReservedBook.Clear();
 
             if(book is null)
                 return;
 
-            foreach(var reader in
-                _booksService.GetBookReadersBooked(book))
-                BookReadersBooked.Add(reader);
+            foreach(var reader in _loansService.GetReadersReservedBook(book))
+                ReadersReservedBook.Add(reader);
         }
 
         [RelayCommand(CanExecute = nameof(CanIssueBook))]

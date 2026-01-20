@@ -1,4 +1,5 @@
-﻿using PaperBooks.Models;
+﻿using PaperBooks.Data;
+using PaperBooks.Models;
 
 using System;
 using System.Collections.Generic;
@@ -8,19 +9,32 @@ namespace PaperBooks.Services
 {
     public class ReadersService : IReadersService
     {
-        public IEnumerable<Reader> GetAll()
+        private readonly IReadersRepository _repository;
+
+        public ReadersService(IReadersRepository repository)
         {
-            return [];
+            _repository = repository;
         }
+
+        public IEnumerable<Reader> GetAll()
+            => _repository.GetAll();
 
         public Reader? GetById(int id)
         {
-            return null;
+            if (id <= 0)
+                return null;
+
+            return _repository.GetById(id);
         }
 
+        /*
         public IEnumerable<Book> GetBooksOfReader(Reader reader)
         {
-            return [];
+            if(reader == null)
+                return Enumerable.Empty<Book>();
+
+            return _repository.GetBooksByReaderId(reader.Id);
         }
-}
+        */
+    }
 }

@@ -4,6 +4,7 @@ namespace PaperBooks.Services
 {
     public interface IBooksService
     {
-        IEnumerable<Reader> GetBookReadersBooked(Book book);
+        //IEnumerable<Book> GetAll();
+        //Book? GetById(int id);
     }
 }

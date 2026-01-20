@@ -6,7 +6,5 @@ namespace PaperBooks.Services
     {
         IEnumerable<Reader> GetAll();
         Reader? GetById(int id);
-
-        IEnumerable<Book> GetBooksOfReader(Reader reader);
     }
 }
