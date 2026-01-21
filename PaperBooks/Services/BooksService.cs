@@ -3,21 +3,21 @@ using PaperBooks.Models;
 
 namespace PaperBooks.Services
 {
-    public class ReadersService : IReadersService
+    public sealed class BooksService : IBooksService
     {
-        private readonly IReadersRepository _repository;
+        private readonly IBooksRepository _repository;
 
-        public ReadersService(IReadersRepository repository)
+        public BooksService(IBooksRepository repository)
         {
             _repository = repository;
         }
 
-        public IEnumerable<Reader> GetAll()
+        public IEnumerable<Book> GetAll()
             => _repository.GetAll();
 
-        public Reader? GetById(int id)
+        public Book? GetById(int id)
         {
-            if (id <= 0)
+            if(id <= 0)
                 return null;
 
             return _repository.GetById(id);

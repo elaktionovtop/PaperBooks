@@ -10,6 +10,5 @@ namespace PaperBooks.Data
     {
         IEnumerable<Book> GetAll();
         Book? GetById(int id);
-        IEnumerable<BookCopy> GetCopiesByReaderId(int readerId);
     }
 }
