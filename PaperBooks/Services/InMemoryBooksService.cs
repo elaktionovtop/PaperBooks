@@ -8,18 +8,18 @@ namespace PaperBooks.Services
 {
     public class InMemoryBooksService : IBooksService
     {
-        private readonly List<Reader> _readers = [];
-
         public InMemoryBooksService()
         {
         }
 
-        public InMemoryBooksService(IEnumerable<Reader> readers)
+        public IEnumerable<Book> GetAll()
         {
-            _readers.AddRange(readers);
+            return [];
         }
 
-        public IEnumerable<Reader> GetReadersReservedBook(Book book)
-            => _readers;
+        public Book? GetById(int id)
+        {
+            return null;
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace PaperBooks.Services
     public interface ILoansService
     {
         IEnumerable<Loan> GetActiveLoans();
+        IEnumerable<Loan> GetReaderLoans(Reader reader);
         IEnumerable<BookCopy> GetReaderBookCopies(Reader reader);
-        IEnumerable<Reader> GetReadersReservedBook(Book book);
         Loan IssueBook(Reader reader, Book book);
         void ReturnBook(Loan loan);
     }

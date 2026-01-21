@@ -8,6 +8,8 @@ namespace PaperBooks.Data
 {
     public interface IBooksRepository
     {
+        IEnumerable<Book> GetAll();
+        Book? GetById(int id);
         IEnumerable<BookCopy> GetCopiesByReaderId(int readerId);
     }
 }

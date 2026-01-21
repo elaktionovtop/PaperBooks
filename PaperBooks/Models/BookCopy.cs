@@ -9,6 +9,5 @@ namespace PaperBooks.Models
         public string InventoryNumber { get; set; } = string.Empty;
         public Book Book { get; set; } = null!;
         public BookCopy() { }
-        public BookCopy(Book book) => Book = book;
     }
 }

@@ -26,15 +26,5 @@ namespace PaperBooks.Services
 
             return _repository.GetById(id);
         }
-
-        /*
-        public IEnumerable<Book> GetBooksOfReader(Reader reader)
-        {
-            if(reader == null)
-                return Enumerable.Empty<Book>();
-
-            return _repository.GetBooksByReaderId(reader.Id);
-        }
-        */
     }
 }

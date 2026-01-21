@@ -29,33 +29,5 @@ namespace Tests.ServicesTests
             Assert.NotNull(readers);
             Assert.NotEmpty(readers);
         }
-        /*
-        [Fact]
-        public void GetBooksOfReader_ForValidReader_ReturnsCollection()
-        {
-            // arrange
-            var reader = _service.GetAll().First();
-
-            // act
-            var books = _service.GetBooksOfReader(reader);
-
-            // assert
-            Assert.NotNull(books);
-        }
-
-        [Fact]
-        public void GetBooksOfReader_ForUnknownReader_ReturnsEmpty()
-        {
-            // arrange
-            var reader = new Reader { Id = -1 };
-
-            // act
-            var books = _service.GetBooksOfReader(reader);
-
-            // assert
-            Assert.NotNull(books);
-            Assert.Empty(books);
-        }
-        */
     }
 }

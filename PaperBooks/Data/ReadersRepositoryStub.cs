@@ -11,7 +11,7 @@ namespace PaperBooks.Data
         private readonly List<Reader> _readers =
         [
             new Reader { Id = 1, Name = "Иванов" },
-        new Reader { Id = 2, Name = "Петров" }
+            new Reader { Id = 2, Name = "Петров" }
         ];
 
         private readonly Dictionary<int, List<Book>> _booksByReader =

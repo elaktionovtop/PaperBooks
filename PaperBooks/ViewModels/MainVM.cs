@@ -13,6 +13,7 @@ namespace PaperBooks.ViewModels
         private readonly IReadersService _readersService;
         private readonly IBooksService _booksService;
         private readonly ILoansService _loansService;
+        private readonly IReservationsService _reservationsService;
 
         public ObservableCollection<Reader> Readers { get; } = [];
         public ObservableCollection<BookCopy> ReaderBookCopies { get; } = [];
@@ -34,11 +35,14 @@ namespace PaperBooks.ViewModels
         public MainVM(
             IReadersService readersService,
             IBooksService booksService,
-            ILoansService loansService)
+            IReservationsService reservationsService,
+            ILoansService loansService
+            )
         {
             _readersService = readersService;
             _booksService = booksService;
             _loansService = loansService;
+            _reservationsService = reservationsService;
 
             LoadInitialData();
         }
@@ -63,7 +67,9 @@ namespace PaperBooks.ViewModels
                 return;
 
             foreach(var bookCopy in _loansService.GetReaderBookCopies(reader))
+            {
                 ReaderBookCopies.Add(bookCopy);
+            }
         }
 
         private void RefreshReaderLoans(Reader? reader)
@@ -73,8 +79,7 @@ namespace PaperBooks.ViewModels
             if(reader is null)
                 return;
 
-            foreach(var loan in _loansService.GetActiveLoans()
-                .Where(l => l.Reader == reader))
+            foreach(var loan in _loansService.GetReaderLoans(reader))
             {
                 ReaderLoans.Add(loan);
             }
@@ -94,8 +99,10 @@ namespace PaperBooks.ViewModels
             if(book is null)
                 return;
 
-            foreach(var reader in _loansService.GetReadersReservedBook(book))
+            foreach(var reader in _reservationsService.GetReadersReservedBook(book))
+            {
                 ReadersReservedBook.Add(reader);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanIssueBook))]

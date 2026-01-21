@@ -2,21 +2,17 @@
 using PaperBooks.Services;
 using PaperBooks.ViewModels;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Tests.VMTests
 {
     public sealed class MainVMTests
     {
         [Fact]
-        public void SelectingReader_LoadsBooksAndLoans()
+        public void SelectingReader_LoadsCopiesAndLoans()
         {
             var reader = new Reader { Name = "Ivan" };
+
             var book = new Book { Title = "CLR via C#" };
-            var copy = new BookCopy(book);
-            var reservation = new Reservation();
+            var copy = new BookCopy { Book = book };
             book.Copies.Add(copy);
 
             var loan = new Loan
@@ -26,16 +22,25 @@ namespace Tests.VMTests
                 IssuedAt = DateTime.Now
             };
 
-            var readersService = new InMemoryReadersService();
-            var booksService = new InMemoryBooksService();
-            var loansService = new InMemoryLoansService(new[] { loan }, 
-                [], new[] { reservation });
+            var reservationsService =
+                new InMemoryReservationsService([]);
 
-            var vm = new MainVM(readersService, booksService, loansService);
+            var loansService =
+                new InMemoryLoansService(
+                    reservationsService,
+                    new[] { loan },
+                    new[] { copy });
 
+            var vm = new MainVM(
+                new InMemoryReadersService(),
+                new InMemoryBooksService(),
+                reservationsService,
+                loansService)
+            {
+            };
             vm.CurrentReader = reader;
 
-            Assert.Single(vm.Books);
+            Assert.Single(vm.ReaderBookCopies);
             Assert.Single(vm.ReaderLoans);
         }
 
@@ -43,16 +48,25 @@ namespace Tests.VMTests
         public void IssueBook_AddsLoan()
         {
             var reader = new Reader { Name = "Ivan" };
+
             var book = new Book { Title = "WPF" };
-            var copy = new BookCopy(book);
+            var copy = new BookCopy { Book = book };
             book.Copies.Add(copy);
 
-            var readersService = new InMemoryReadersService();
-            var booksService = new InMemoryBooksService();
-            var loansService = new InMemoryLoansService([],
-                [], [] );
+            var reservationsService =
+                new InMemoryReservationsService([]);
 
-            var vm = new MainVM(readersService, booksService, loansService)
+            var loansService =
+                new InMemoryLoansService(
+                    reservationsService,
+                    [],
+                    new[] { copy });
+
+            var vm = new MainVM(
+                new InMemoryReadersService(),
+                new InMemoryBooksService(),
+                reservationsService,
+                loansService)
             {
                 CurrentReader = reader,
                 CurrentBook = book
@@ -68,8 +82,9 @@ namespace Tests.VMTests
         public void ReturnBook_RemovesLoan()
         {
             var reader = new Reader { Name = "Ivan" };
+
             var book = new Book { Title = "LINQ" };
-            var copy = new BookCopy(book);
+            var copy = new BookCopy { Book = book };
             book.Copies.Add(copy);
 
             var loan = new Loan
@@ -79,17 +94,25 @@ namespace Tests.VMTests
                 IssuedAt = DateTime.Now
             };
 
-            var readersService = new InMemoryReadersService();
-            var booksService = new InMemoryBooksService();
-            var loansService = new InMemoryLoansService([],
-                [], []);
+            var reservationsService =
+                new InMemoryReservationsService([]);
 
-            var vm = new MainVM(readersService, booksService, loansService)
+            var loansService =
+                new InMemoryLoansService(
+                    reservationsService,
+                    new[] { loan },
+                    new[] { copy });
+
+            var vm = new MainVM(
+                new InMemoryReadersService(),
+                new InMemoryBooksService(),
+                reservationsService,
+                loansService)
             {
-                CurrentReader = reader
+                CurrentReader = reader,
+                CurrentLoan = loan
             };
 
-            vm.CurrentLoan = vm.ReaderLoans.Single();
             vm.ReturnBookCommand.Execute(null);
 
             Assert.Empty(vm.ReaderLoans);
@@ -98,10 +121,20 @@ namespace Tests.VMTests
         [Fact]
         public void CannotIssueBook_WithoutReaderOrBook()
         {
+            var reservationsService =
+                new InMemoryReservationsService([]);
+
+            var loansService =
+                new InMemoryLoansService(
+                    reservationsService,
+                    [],
+                    []);
+
             var vm = new MainVM(
                 new InMemoryReadersService(),
                 new InMemoryBooksService(),
-                new InMemoryLoansService([], [], []));
+                reservationsService,
+                loansService);
 
             Assert.False(vm.IssueBookCommand.CanExecute(null));
 
