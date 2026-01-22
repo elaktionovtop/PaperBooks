@@ -6,6 +6,7 @@ namespace PaperBooks.Models
 {
     public sealed class Reservation
     {
+        public int Id { get; init; }
         public Book Book { get; init; } = null!;
         public Reader Reader { get; init; } = null!;
         public DateTime CreatedAt { get; init; }
