@@ -42,6 +42,13 @@ namespace PaperBooks
 
             var serviceProvider = services.BuildServiceProvider();
 
+            // Получаем DbContext из DI
+            using(var scope = serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+                DbInitializer.Initialize(context);
+            }
+
             var mainVm = serviceProvider.GetRequiredService<MainVM>();
             var mainWindow = new MainWindow { DataContext = mainVm };
             mainWindow.Show();

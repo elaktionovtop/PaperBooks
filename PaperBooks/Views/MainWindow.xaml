@@ -1,12 +1,87 @@
-﻿<Window x:Class="PaperBooks.MainWindow"
+﻿<Window x:Class="PaperBooks.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PaperBooks"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Library" Height="600" Width="1000">
+
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Readers -->
+        <GroupBox Header="Readers" Margin="4">
+            <ListBox ItemsSource="{Binding Readers}"
+                     SelectedItem="{Binding CurrentReader}"
+                     DisplayMemberPath="Name"/>
+        </GroupBox>
+
+        <!-- Books -->
+        <GroupBox Grid.Column="1" Header="Books" Margin="4">
+            <ListBox ItemsSource="{Binding Books}"
+                     SelectedItem="{Binding CurrentBook}"
+                     DisplayMemberPath="Title"/>
+        </GroupBox>
+
+        <!-- Details -->
+        <Grid Grid.Column="2" Margin="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Reader Book Copies -->
+            <GroupBox Header="Reader book copies" Margin="2">
+                <ListBox ItemsSource="{Binding ReaderBookCopies}"
+                         DisplayMemberPath="InventoryCode"/>
+            </GroupBox>
+
+            <!-- Reader Loans -->
+            <GroupBox Grid.Row="1" Header="Reader loans" Margin="2">
+                <ListBox ItemsSource="{Binding ReaderLoans}"
+                         SelectedItem="{Binding CurrentLoan}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Copy.InventoryCode}" Margin="0,0,8,0"/>
+                                <TextBlock Text="{Binding LoanDate}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <!-- Readers Reserved Book -->
+            <GroupBox Grid.Row="2" Header="Readers reserved book" Margin="2">
+                <ListBox ItemsSource="{Binding ReadersReservedBook}"
+                         DisplayMemberPath="Name"/>
+            </GroupBox>
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="8">
+
+            <Button Content="Issue book"
+                    Width="120"
+                    Margin="8"
+                    Command="{Binding IssueBookCommand}"/>
+
+            <Button Content="Return book"
+                    Width="120"
+                    Margin="8"
+                    Command="{Binding ReturnBookCommand}"/>
+
+        </StackPanel>
 
     </Grid>
 </Window>
