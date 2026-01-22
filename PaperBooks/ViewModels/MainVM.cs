@@ -36,8 +36,7 @@ namespace PaperBooks.ViewModels
             IReadersService readersService,
             IBooksService booksService,
             IReservationsService reservationsService,
-            ILoansService loansService
-            )
+            ILoansService loansService)
         {
             _readersService = readersService;
             _booksService = booksService;
@@ -87,10 +86,8 @@ namespace PaperBooks.ViewModels
             CurrentLoan = ReaderLoans.FirstOrDefault();
         }
 
-        partial void OnCurrentBookChanged(Book? value)
-        {
+        partial void OnCurrentBookChanged(Book? value) =>
             RefreshReadersReservedBook(value);
-        }
 
         private void RefreshReadersReservedBook(Book? book)
         {
@@ -124,8 +121,9 @@ namespace PaperBooks.ViewModels
             RefreshReaderLoans(CurrentReader);
         }
 
-        private bool CanReturnBook() =>
+        private bool CanReturnBook() => 
             CurrentLoan != null;
+             
     }
 }
 

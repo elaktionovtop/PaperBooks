@@ -1,8 +1,11 @@
 ﻿using PaperBooks.Data;
 using PaperBooks.Models;
 using PaperBooks.Services;
-
-namespace Tests.ServiceTests
+/*
+ выбор читателей, зарезервировавших книгу
+ удаление резервации
+*/
+namespace Tests.ServicesTests
 {
     public sealed class ReservationsServiceTests
     {

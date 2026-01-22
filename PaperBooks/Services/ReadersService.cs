@@ -12,15 +12,10 @@ namespace PaperBooks.Services
             _repository = repository;
         }
 
-        public IEnumerable<Reader> GetAll()
-            => _repository.GetAll();
+        public IEnumerable<Reader> GetAll() =>
+            _repository.GetAll();
 
-        public Reader? GetById(int id)
-        {
-            if (id <= 0)
-                return null;
-
-            return _repository.GetById(id);
-        }
+        public Reader? GetById(int id) => 
+            _repository.GetById(id);
     }
 }

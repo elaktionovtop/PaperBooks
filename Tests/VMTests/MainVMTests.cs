@@ -1,7 +1,16 @@
 ﻿using PaperBooks.Models;
 using PaperBooks.Services;
 using PaperBooks.ViewModels;
+/*
+выбор читателя с книгами
+выдача книги
+возврат книги
+невозможнось выдачи
+? выбор читателя без книг
+? отсутствие читателя
 
+? выделение метода создания MainVM  
+*/
 namespace Tests.VMTests
 {
     public sealed class MainVMTests
