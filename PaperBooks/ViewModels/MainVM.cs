@@ -48,8 +48,16 @@ namespace PaperBooks.ViewModels
 
         private void LoadInitialData()
         {
-            // Пока заглушки — реальные источники подключишь позже
-            // Readers / Books могут быть загружены извне
+            Readers.Clear();
+            foreach(var reader in _readersService.GetAll())
+                Readers.Add(reader);
+
+            Books.Clear();
+            foreach(var book in _booksService.GetAll())
+                Books.Add(book);
+
+            CurrentReader = Readers.FirstOrDefault();
+            CurrentBook = Books.FirstOrDefault();
         }
 
         partial void OnCurrentReaderChanged(Reader? value)
