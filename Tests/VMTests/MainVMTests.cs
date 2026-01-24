@@ -28,7 +28,7 @@ namespace Tests.VMTests
             {
                 Reader = reader,
                 Copy = copy,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var reservationsService =
@@ -49,7 +49,6 @@ namespace Tests.VMTests
             };
             vm.CurrentReader = reader;
 
-            Assert.Single(vm.ReaderBookCopies);
             Assert.Single(vm.ReaderLoans);
         }
 
@@ -100,7 +99,7 @@ namespace Tests.VMTests
             {
                 Reader = reader,
                 Copy = copy,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var reservationsService =

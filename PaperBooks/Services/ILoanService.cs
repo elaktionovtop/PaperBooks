@@ -13,5 +13,6 @@ namespace PaperBooks.Services
         IEnumerable<BookCopy> GetReaderBookCopies(Reader reader);
         Loan IssueBook(Reader reader, Book book);
         void ReturnBook(Loan loan);
+        bool IsAnyCopyFree(Book book);
     }
 }

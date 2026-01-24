@@ -47,7 +47,7 @@ namespace PaperBooks.Services
             {
                 Reader = reader,
                 Copy = freeCopy,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             _repository.Add(loan);
@@ -59,14 +59,25 @@ namespace PaperBooks.Services
             if(loan is null)
                 return;
 
-            loan.ReturnAt = DateTime.Now;
+            loan.ReturnAt = DateOnly.FromDateTime(DateTime.Now);
             _repository.Remove(loan);
         }
 
-        // возможно, реализовать по-другому
+        public bool IsAnyCopyFree(Book book)
+        {
+            if(book is null) return false;
+
+            // Получаем все активные копии один раз
+            var activeCopies = GetActiveLoans()
+                .Select(l => l.Copy)
+                .ToHashSet();
+
+            // Проверяем, есть ли копия книги, которой нет среди активных
+            return book.Copies.Any(c => !activeCopies.Contains(c));
+        }
+
         private bool IsFree(BookCopy copy) =>
-            !(_repository.GetAll()
-            .Any(l => l.Copy == copy &&
-                l.ReturnAt == null));
+            !_repository.GetAll()
+                .Any(l => l.Copy == copy && l.ReturnAt == null);
     }
 }

@@ -5,6 +5,7 @@ using PaperBooks.Models;
 using PaperBooks.Services;
 
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace PaperBooks.ViewModels
 {
@@ -15,13 +16,10 @@ namespace PaperBooks.ViewModels
         private readonly ILoansService _loansService;
         private readonly IReservationsService _reservationsService;
 
-        public ObservableCollection<Reader> Readers { get; } = [];
-        public ObservableCollection<BookCopy> ReaderBookCopies { get; } = [];
-
-        public ObservableCollection<Book> Books { get; } = [];
-        public ObservableCollection<Reader> ReadersReservedBook { get; } = [];
-
-        public ObservableCollection<Loan> ReaderLoans { get; } = [];
+        public ObservableCollection<Reader> Readers { get; } = new();
+        public ObservableCollection<Book> Books { get; } = new();
+        public ObservableCollection<Loan> ReaderLoans { get; } = new();
+        public ObservableCollection<Reader> ReadersReservedBook { get; } = new();
 
         [ObservableProperty]
         private Reader? _currentReader;
@@ -62,21 +60,9 @@ namespace PaperBooks.ViewModels
 
         partial void OnCurrentReaderChanged(Reader? value)
         {
-            RefreshReaderBookCopies(value);
             RefreshReaderLoans(value);
-        }
-
-        private void RefreshReaderBookCopies(Reader? reader)
-        {
-            ReaderBookCopies.Clear();
-
-            if(reader is null)
-                return;
-
-            foreach(var bookCopy in _loansService.GetReaderBookCopies(reader))
-            {
-                ReaderBookCopies.Add(bookCopy);
-            }
+            IssueBookCommand.NotifyCanExecuteChanged();
+            ReturnBookCommand.NotifyCanExecuteChanged();
         }
 
         private void RefreshReaderLoans(Reader? reader)
@@ -87,15 +73,17 @@ namespace PaperBooks.ViewModels
                 return;
 
             foreach(var loan in _loansService.GetReaderLoans(reader))
-            {
                 ReaderLoans.Add(loan);
-            }
 
             CurrentLoan = ReaderLoans.FirstOrDefault();
         }
 
-        partial void OnCurrentBookChanged(Book? value) =>
+        partial void OnCurrentBookChanged(Book? value)
+        {
             RefreshReadersReservedBook(value);
+            IssueBookCommand.NotifyCanExecuteChanged();
+            ReturnBookCommand.NotifyCanExecuteChanged();
+        }
 
         private void RefreshReadersReservedBook(Book? book)
         {
@@ -105,33 +93,42 @@ namespace PaperBooks.ViewModels
                 return;
 
             foreach(var reader in _reservationsService.GetReadersReservedBook(book))
-            {
                 ReadersReservedBook.Add(reader);
-            }
         }
 
         [RelayCommand(CanExecute = nameof(CanIssueBook))]
         private void IssueBook()
         {
-            var loan = _loansService.IssueBook(CurrentReader!, CurrentBook!);
+            if(CurrentReader is null || CurrentBook is null)
+                return;
+
+            var loan = _loansService.IssueBook(CurrentReader, CurrentBook);
             RefreshReaderLoans(CurrentReader);
+            RefreshReadersReservedBook(CurrentBook);
             CurrentLoan = loan;
+            IssueBookCommand.NotifyCanExecuteChanged();
+            ReturnBookCommand.NotifyCanExecuteChanged();
         }
 
         private bool CanIssueBook() =>
             CurrentReader != null &&
-            CurrentBook != null;
+            CurrentBook != null &&
+            _loansService.IsAnyCopyFree(CurrentBook);
 
         [RelayCommand(CanExecute = nameof(CanReturnBook))]
         private void ReturnBook()
         {
-            _loansService.ReturnBook(CurrentLoan!);
+            if(CurrentLoan is null)
+                return;
+
+            _loansService.ReturnBook(CurrentLoan);
             RefreshReaderLoans(CurrentReader);
+            IssueBookCommand.NotifyCanExecuteChanged();
+            ReturnBookCommand.NotifyCanExecuteChanged();
         }
 
-        private bool CanReturnBook() => 
+        private bool CanReturnBook() =>
             CurrentLoan != null;
-             
     }
 }
 

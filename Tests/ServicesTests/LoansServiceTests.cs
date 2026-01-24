@@ -49,7 +49,7 @@ namespace Tests.ServiceTests
             {
                 Reader = reader,
                 Copy = copy,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var repository =
@@ -78,7 +78,7 @@ namespace Tests.ServiceTests
             {
                 Reader = reader,
                 Copy = copy,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var repository =
@@ -112,14 +112,14 @@ namespace Tests.ServiceTests
             {
                 Reader = reader1,
                 Copy = copy1,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var loan2 = new Loan
             {
                 Reader = reader2,
                 Copy = copy2,
-                IssuedAt = DateTime.Now
+                IssuedAt = DateOnly.FromDateTime(DateTime.Now)
             };
 
             var repository =

@@ -11,7 +11,7 @@ namespace PaperBooks.Data
             {
                 Book = new Book { Id = 1, Title = "CLR via C#" },
                 Reader = new Reader { Id = 1, Name = "Иванов" },
-                CreatedAt = DateTime.Now
+                CreatedAt = DateOnly.FromDateTime(DateTime.Now)
             }
         ];
 

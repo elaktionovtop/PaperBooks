@@ -1,87 +1,97 @@
 ﻿<Window x:Class="PaperBooks.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Library" Height="600" Width="1000">
+        Title="Библиотека" Height="600" Width="1000">
 
-    <Grid Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <!-- Меню -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Выдать книгу"
+                      Style="{StaticResource CommandMenuItemStyle}"
+                      Command="{Binding IssueBookCommand}"/>
+            <MenuItem Header="Вернуть книгу"                       
+                      Style="{StaticResource CommandMenuItemStyle}"
+                      Command="{Binding ReturnBookCommand}"/>
+        </Menu>
 
-        <!-- Readers -->
-        <GroupBox Header="Readers" Margin="4">
-            <ListBox ItemsSource="{Binding Readers}"
-                     SelectedItem="{Binding CurrentReader}"
-                     DisplayMemberPath="Name"/>
-        </GroupBox>
+        <!-- Основной контент -->
+        <Grid Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <!-- Читатели -->
+                <ColumnDefinition Width="3*"/>
+                <!-- Центр: журнал + бронь -->
+                <ColumnDefinition Width="2*"/>
+                <!-- Книги -->
+            </Grid.ColumnDefinitions>
 
-        <!-- Books -->
-        <GroupBox Grid.Column="1" Header="Books" Margin="4">
-            <ListBox ItemsSource="{Binding Books}"
-                     SelectedItem="{Binding CurrentBook}"
-                     DisplayMemberPath="Title"/>
-        </GroupBox>
-
-        <!-- Details -->
-        <Grid Grid.Column="2" Margin="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <!-- Журнал / Читатели / Книги -->
+                <RowDefinition Height="Auto"/>
+                <!-- Бронь -->
             </Grid.RowDefinitions>
 
-            <!-- Reader Book Copies -->
-            <GroupBox Header="Reader book copies" Margin="2">
-                <ListBox ItemsSource="{Binding ReaderBookCopies}"
-                         DisplayMemberPath="InventoryCode"/>
+            <!-- Список читателей -->
+            <GroupBox Header="Читатели" Margin="4">
+                <ListBox ItemsSource="{Binding Readers}"
+                         SelectedItem="{Binding CurrentReader}"
+                         DisplayMemberPath="Name"/>
             </GroupBox>
 
-            <!-- Reader Loans -->
-            <GroupBox Grid.Row="1" Header="Reader loans" Margin="2">
+            <!-- Журнал читателя -->
+            <GroupBox Grid.Column="1" Header="Журнал" Margin="4">
                 <ListBox ItemsSource="{Binding ReaderLoans}"
-                         SelectedItem="{Binding CurrentLoan}">
+                         SelectedItem="{Binding CurrentLoan}" MaxHeight="200">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Copy.InventoryCode}" Margin="0,0,8,0"/>
-                                <TextBlock Text="{Binding LoanDate}"/>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="{Binding Reader.Name}" Width="120"/>
+                                <TextBlock Text="{Binding Copy.Book.Title}" Width="150"/>
+                                <TextBlock Text="{Binding IssuedAt}" Width="100"/>
+                                <TextBlock Text="{Binding ReturnAt, TargetNullValue='На руках'}" Width="100"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </GroupBox>
 
-            <!-- Readers Reserved Book -->
-            <GroupBox Grid.Row="2" Header="Readers reserved book" Margin="2">
-                <ListBox ItemsSource="{Binding ReadersReservedBook}"
-                         DisplayMemberPath="Name"/>
+            <!-- Список книг -->
+            <GroupBox Grid.Column="2" Header="Книги" Margin="4">
+                <ListBox ItemsSource="{Binding Books}" SelectedItem="{Binding CurrentBook}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="{Binding Title}" Width="150"/>
+                                <TextBlock Text="{Binding Authors[0].Name, TargetNullValue='-'}" Width="120"/>
+                                <!-- Цвет текста по статусу свободности -->
+                                <TextBlock Width="80" Margin="4,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Свободна"/>
+                                            <Setter Property="Foreground" Value="Green"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Copies}" Value="{x:Null}">
+                                                    <Setter Property="Text" Value="Занята"/>
+                                                    <Setter Property="Foreground" Value="Red"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </GroupBox>
+
+            <!-- Список брони -->
+            <GroupBox Grid.Column="1" Grid.Row="1" Header="Бронирование" Margin="4" MaxHeight="120">
+                <ListBox ItemsSource="{Binding ReadersReservedBook}" DisplayMemberPath="Name"/>
+            </GroupBox>
+
         </Grid>
 
-        <!-- Buttons -->
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Margin="8">
-
-            <Button Content="Issue book"
-                    Width="120"
-                    Margin="8"
-                    Command="{Binding IssueBookCommand}"/>
-
-            <Button Content="Return book"
-                    Width="120"
-                    Margin="8"
-                    Command="{Binding ReturnBookCommand}"/>
-
-        </StackPanel>
-
-    </Grid>
+    </DockPanel>
 </Window>

@@ -12,7 +12,7 @@ using PaperBooks.Data;
 namespace PaperBooks.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260122132152_Init")]
+    [Migration("20260124135148_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -25,6 +25,38 @@ namespace PaperBooks.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsId", "BooksId");
+
+                    b.HasIndex("BooksId");
+
+                    b.ToTable("AuthorBook");
+                });
+
+            modelBuilder.Entity("PaperBooks.Models.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+                });
+
             modelBuilder.Entity("PaperBooks.Models.Book", b =>
                 {
                     b.Property<int>("Id")
@@ -32,6 +64,9 @@ namespace PaperBooks.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PublishYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -75,14 +110,14 @@ namespace PaperBooks.Migrations
                     b.Property<int>("CopyId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("IssuedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("IssuedAt")
+                        .HasColumnType("date");
 
                     b.Property<int>("ReaderId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ReturnAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly?>("ReturnAt")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -100,6 +135,9 @@ namespace PaperBooks.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BirthYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -121,8 +159,8 @@ namespace PaperBooks.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
 
                     b.Property<int>("ReaderId")
                         .HasColumnType("int");
@@ -134,6 +172,21 @@ namespace PaperBooks.Migrations
                     b.HasIndex("ReaderId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.HasOne("PaperBooks.Models.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PaperBooks.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PaperBooks.Models.BookCopy", b =>
@@ -152,13 +205,13 @@ namespace PaperBooks.Migrations
                     b.HasOne("PaperBooks.Models.BookCopy", "Copy")
                         .WithMany()
                         .HasForeignKey("CopyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PaperBooks.Models.Reader", "Reader")
                         .WithMany()
                         .HasForeignKey("ReaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Copy");

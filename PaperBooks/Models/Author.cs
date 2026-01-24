@@ -4,10 +4,10 @@ using System.Text;
 
 namespace PaperBooks.Models
 {
-    public sealed class Reader
+    public sealed class Author
     {
         public int Id { get; init; }
         public string Name { get; init; } = string.Empty;
-        public int BirthYear { get; init; }
+        public List<Book> Books { get; } = new();
     }
 }
